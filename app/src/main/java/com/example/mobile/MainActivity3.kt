@@ -73,66 +73,59 @@ class MainActivity3 : ComponentActivity() {
             val mContext = LocalContext.current
 
             // Creating a Top bar
-            Scaffold(
-                topBar = {
-                TopAppBar(
-                    title = { Text("Home", color = Color.White) },
-                    backgroundColor = Color(0xFF001AFF),
-                    actions = {
+            TopAppBar(
+                title = { Text("Home", color = Color.White) },
+                backgroundColor = Color(0xFF001AFF),
+                actions = {
 
-                        // Creating Icon button favorites, on click
+                    // Creating Icon button favorites, on click
+                    // would create a Toast message
+                    IconButton(onClick = {
+                        Toast.makeText(mContext, "New", Toast.LENGTH_SHORT).show()
+                    }) {
+                        Icon(Icons.Default.Add, "")
+                    }
+
+                    // Creating Icon button for dropdown menu
+                    IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
+                        Icon(Icons.Default.MoreVert, "")
+                    }
+
+                    // Creating a dropdown menu
+                    DropdownMenu(
+                        expanded = mDisplayMenu,
+                        onDismissRequest = { mDisplayMenu = false }
+                    ) {
+
+                        // Creating dropdown menu item, on click
                         // would create a Toast message
-                        IconButton(onClick = {
-                            Toast.makeText(mContext, "New", Toast.LENGTH_SHORT).show()
+                        val context = LocalContext.current
+                        DropdownMenuItem(onClick = {
+                            context.startActivity(Intent(context,MainActivity2::class.java))
+                            Toast.makeText(
+                                mContext,
+                                "Settings",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }) {
-                            Icon(Icons.Default.Add, "")
+                            Text(text = "Profile settings")
                         }
 
-                        // Creating Icon button for dropdown menu
-                        IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
-                            Icon(Icons.Default.MoreVert, "")
+                        // Creating dropdown menu item, on click
+                        // would create a Toast message
+                        DropdownMenuItem(onClick = {
+                            context.startActivity(Intent(context,MainActivity::class.java))
+                            Toast.makeText(
+                                mContext,
+                                "Logout",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }) {
+                            Text(text = "Logout")
                         }
-
-                        // Creating a dropdown menu
-                        DropdownMenu(
-                            expanded = mDisplayMenu,
-                            onDismissRequest = { mDisplayMenu = false }
-                        ) {
-
-                            // Creating dropdown menu item, on click
-                            // would create a Toast message
-                            val context = LocalContext.current
-                            DropdownMenuItem(onClick = {
-                                context.startActivity(Intent(context,MainActivity2::class.java))
-                                Toast.makeText(
-                                    mContext,
-                                    "Settings",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }) {
-                                Text(text = "Profile settings")
-                            }
-
-                            // Creating dropdown menu item, on click
-                            // would create a Toast message
-                            DropdownMenuItem(onClick = {
-                                context.startActivity(Intent(context,MainActivity::class.java))
-                                Toast.makeText(
-                                    mContext,
-                                    "Logout",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }) {
-                                Text(text = "Logout")
-                            }
-                        }
+                    }
                 }
             )
-        }) {innerPadding ->
-
-
-            }
-
         }
 
         // For displaying preview in
