@@ -1,17 +1,16 @@
 package com.example.mobile
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
 import org.w3c.dom.Text
@@ -28,16 +27,23 @@ class MainActivity : AppCompatActivity() {
         val sign = findViewById<LinearLayout>(R.id.sign)
         val signIn = findViewById<Button>(R.id.signIn)
         val logInLayout = findViewById<LinearLayout>(R.id.logInLayout)
+        val user1 = findViewById<TextInputEditText>(R.id.emails)
+        val pass1 = findViewById<TextInputEditText>(R.id.passwords1)
+        val user2 = findViewById<TextInputEditText>(R.id.email)
+        val pass2 = findViewById<TextInputEditText>(R.id.passwords)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        var logOrSign = true // true is log in and false is sign up
         signUp.setOnClickListener {
+            logOrSign = false
             signUp.background = resources.getDrawable(R.drawable.switch_trcks, null)
             signUp.setTextColor(resources.getColor(R.color.textColor, null))
             logIn.background = null
             sign.visibility = View.VISIBLE
             logInLayout.visibility = View.GONE
             logIn.setTextColor(resources.getColor(R.color.pinkColor, null))
-
         }
         logIn.setOnClickListener {
+            logOrSign = true
             signUp.background = null
             signUp.setTextColor(resources.getColor(R.color.pinkColor, null))
             logIn.background = resources.getDrawable(R.drawable.switch_trcks, null)
@@ -47,8 +53,33 @@ class MainActivity : AppCompatActivity() {
         }
 
         signIn.setOnClickListener {
-            val intent = Intent(this, MainActivity3::class.java)
-            startActivity(intent)
+            val editor: SharedPreferences.Editor = sharedPreferences.edit()
+            val passw: String? = sharedPreferences.getString("password", "a")
+            val usern: String? = sharedPreferences.getString("username", "a")
+            if (usern == "a" && passw == "a" && logOrSign == true){
+                Toast.makeText(applicationContext,"Sign up first",Toast.LENGTH_SHORT).show()
+            }else if(logOrSign == false){
+                editor.putString("password", pass1.text.toString().trim())
+                editor.putString("username", user1.text.toString().trim())
+                editor.putInt("id", 1)
+                editor.apply()
+                Toast.makeText(applicationContext,"Email & Password saved, Welcome "+ user1.text.toString().trim(),Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MainActivity3::class.java)
+                startActivity(intent)
+                finish()
+            }
+            val passw2: String? = sharedPreferences.getString("password", "a")
+            val usern2: String? = sharedPreferences.getString("username", "a")
+            val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+            if (passw2 == pass2.text.toString() && usern2 == user2.text.toString()){
+                Toast.makeText(applicationContext,"Welcome "+usern2,Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MainActivity3::class.java)
+                startActivity(intent)
+                finish()
+            }else if(usern != ""&&(passw2 != pass1.text.toString() || usern2 != user1.text.toString())){
+                Toast.makeText(applicationContext,"Incorrect email or password",Toast.LENGTH_SHORT).show()
+            }
+
 
         }}
 }
