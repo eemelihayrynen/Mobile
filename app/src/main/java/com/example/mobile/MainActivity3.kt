@@ -48,7 +48,10 @@ class MainActivity3 : ComponentActivity() {
                         },
                         actions = {
                             val context = LocalContext.current
-                            IconButton(onClick = { /* doSomething() */ }) {
+                            IconButton(onClick = {
+                                context.startActivity(Intent(context,Popup::class.java))
+                                finish()
+                            }) {
                                 Icon(
                                     imageVector = Icons.Filled.Add,
                                     contentDescription = "Add"
@@ -84,10 +87,25 @@ class MainActivity3 : ComponentActivity() {
                                 )
 
                                 Button(
-                                    onClick = { }
+                                    onClick = {
+                                        //val intent = Intent(this, popupmenu::class.java)
+                                        //startActivity(intent)
+                                        //finish()
+                                    }
                                 ) {
                                     Text(
-                                        text = "Show more",
+                                        text = "Edit",
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+
+                                Button(
+                                    onClick = {
+                                        //List.remove(item)
+                                    },
+                                ) {
+                                    Text(
+                                        text = "Delete",
                                         textAlign = TextAlign.Center
                                     )
                                 }
