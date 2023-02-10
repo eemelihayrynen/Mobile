@@ -49,7 +49,7 @@ class MainActivity3 : ComponentActivity() {
                         actions = {
                             val context = LocalContext.current
                             IconButton(onClick = {
-                                context.startActivity(Intent(context,Popup::class.java))
+                                context.startActivity(Intent(context,MainActivity4::class.java))
                                 finish()
                             }) {
                                 Icon(
