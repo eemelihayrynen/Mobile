@@ -1,3 +1,4 @@
+
 package com.example.mobile
 
 import androidx.compose.foundation.background
@@ -55,7 +56,7 @@ fun CustomItemPreview() {
             location_y= "Wakeup",
             reminder_time = "4:10",
             creation_time= "5",
-            creator_id= "Wakeup",
+            creator_id= 5,
             reminder_seen= "Wakeup"
         )
     )
