@@ -7,10 +7,13 @@ import android.content.Intent
 import android.text.TextUtils
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.compose.setContent
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.lifecycle.ViewModelProvider
-import com.example.mobile.model.ReminderRepository
 import com.example.mobile.model.ReminderViewModel
 import com.example.mobile.model.reminder
+import com.example.mobile.ui.theme.MobileTheme
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,9 +41,14 @@ class MainActivity4 : AppCompatActivity() {
         mViewModel = ViewModelProvider(this).get(ReminderViewModel::class.java)
         ok.setOnClickListener{
             insertDataToDatabase()
-            val intent = Intent(this, MainActivity3::class.java)
-            startActivity(intent)
-            finish()
+            setContent {
+                MobileTheme {
+                    // A surface container using the 'background' color from the theme
+                    Surface(color = MaterialTheme.colors.background) {
+                        MobileComputingApp()
+                    }
+                }
+            }
         }
     }
 
@@ -48,8 +56,8 @@ class MainActivity4 : AppCompatActivity() {
         val time = findViewById<TextView>(R.id.timeTv).text.toString()
         val name = findViewById<TextInputEditText>(R.id.remindertext).text.toString()
 
-        val remind = reminder(5,name,"test","time","time","5","test")
-        mViewModel.addUser(remind)
+        val remind = reminder(5,5,"test","time","time","5","test")
+
 
     }
     private fun inputCheck(time: String, name: String): Boolean{

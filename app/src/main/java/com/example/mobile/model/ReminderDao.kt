@@ -3,21 +3,31 @@ package com.example.mobile.model
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import com.example.mobile.model.Category
 
 
 @Dao
-interface ReminderDao {
+abstract class ReminderDao {
+    @Query(value = "SELECT * FROM categories WHERE name = :name")
+    abstract suspend fun getCategoryWithName(name: String): Category?
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insert(entity: Category):Long
 
-    @Insert
-    suspend fun addReminder(Reminder: reminder)
+    @Query(value = "SELECT * FROM categories WHERE id = :categoryId")
+    abstract fun getCategoryWithId(categoryId: Long): Category?
 
-    @Update
-    suspend fun updateReminder(Reminder: reminder)
+    @Query(value = "SELECT * FROM categories LIMIT 15")
+    abstract fun categories(): Flow<List<Category>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertAll(entity: Collection<Category>)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun update(entity: Category)
 
     @Delete
-    suspend fun deleteReminder(Reminder: reminder)
+    abstract suspend fun delete(entity: Category): Int
 
 
-    @Query("SELECT * FROM reminder_table")
-    fun readAllData(): Flow<List<reminder>>
+
 }

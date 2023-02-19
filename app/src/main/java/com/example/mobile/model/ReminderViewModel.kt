@@ -1,61 +1,59 @@
 package com.example.mobile.model
 
-import android.app.Application
-import androidx.compose.runtime.MutableState
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import com.example.mobile.Graph
+import com.example.mobile.repository.ReminderRepository
+import kotlinx.coroutines.flow.*
 
 
-interface ReminderViewModelAbstract {
-    val selectedState: State<reminder?>
-    val reminderListFlow: Flow<List<reminder>>
-    fun addOrUpdateReminder(Reminder: reminder)
-    fun deleteReminder(Reminder: reminder)
-    fun selectReminder(Reminder: reminder)
-    fun resetSelectedReminder()
-}
-@HiltViewModel
-class ReminderViewModel
-@Inject constructor(
-    private val reminderRepository: ReminderRepository,
-): ViewModel(),ReminderViewModelAbstract {
-    private val ioScope = CoroutineScope(Dispatchers.IO)
 
-    private val _selectedState: MutableState<reminder?> = mutableStateOf(null)
-    override val selectedState: State<reminder?>
-        get() = _selectedState
+class ReminderViewModel(
+    private val reminderRepository: ReminderRepository = Graph.reminderRepository
+) : ViewModel(){
+    private val _state = MutableStateFlow(ReminderViewState())
+    private val _selectedCategory = MutableStateFlow<Category?>(null)
 
-    override val reminderListFlow: Flow<List<reminder>> = reminderRepository.readAllData()
+    val state: StateFlow<ReminderViewState>
+        get()=_state
 
-    override fun addOrUpdateReminder(Reminder: reminder) {
-        ioScope.launch {
-            if (Reminder.creator_id == null) {
-                reminderRepository.addReminder(Reminder)
-            } else {
-                reminderRepository.updateReminder(Reminder)
-            }
+    fun onCategorySelected(category: Category){
+        _selectedCategory.value = category
+    }
+
+    init {
+        viewModelScope.launch {
+
+            combine(
+                reminderRepository.categories().onEach { list ->
+                    if (list.isNotEmpty() && _selectedCategory.value == null){
+                        _selectedCategory.value = list[0]
+                    }
+                },
+                _selectedCategory
+            ) {categories, selectedCategory ->
+                ReminderViewState(
+                    categories = categories,
+                    selectedCategory = selectedCategory
+                )
+            } .collect{ _state.value = it }
+        }
+        loadCategoriesFromdb()
+    }
+
+
+    private fun loadCategoriesFromdb(){
+        val list = mutableListOf(
+        Category(name = "Reminders")
+        )
+        viewModelScope.launch{
+            list.forEach{ category -> reminderRepository.addCategory(category) }
         }
     }
-
-    override fun deleteReminder(Reminder: reminder) {
-        _selectedState.value = Reminder
-    }
-
-    override fun selectReminder(Reminder: reminder) {
-        _selectedState.value = Reminder
-    }
-
-    override fun resetSelectedReminder() {
-        _selectedState.value = null
-    }
 }
+
+data class ReminderViewState(
+    val categories: List<Category> = emptyList(),
+    val selectedCategory: Category? = null
+)

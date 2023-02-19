@@ -1,6 +1,9 @@
 @file:Suppress("OPT_IN_IS_NOT_ENABLED")
 
 package com.example.mobile
+import android.annotation.SuppressLint
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -8,116 +11,176 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.mobile.model.reminder
-import com.example.mobile.model.ReminderViewModelAbstract
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import com.example.mobile.model.Category
+import com.example.mobile.model.ReminderViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun HomeScreen(
-    reminderViewModel: ReminderViewModelAbstract,
-    onClickNote: (reminder) -> Unit,
-    onClickAddNote: () -> Unit,
-) {
-    val reminderListState = reminderViewModel.reminderListFlow.collectAsState(initial = listOf())
-    val txtState = rememberSaveable { mutableStateOf("") }
-    val noteIdState: MutableState<Long?> = rememberSaveable { mutableStateOf(null) }
+    @Composable
+    fun Home(
+        viewModel: ReminderViewModel = viewModel(),
+        navController: NavController
+    ) {
+        val viewState by viewModel.state.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Home")
-                },
+        val selectedCategory = viewState.selectedCategory
 
-                navigationIcon = {
-                    Icon(
-                        modifier = Modifier.padding(start = 8.dp),
-                        imageVector = Icons.Filled.Person,
-                        contentDescription = null
-                    )
-                }
-            )
-
-        }
-    ) { contentPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(contentPadding)
-                .animateContentSize(),
-        ) {
-            items(
-                items = reminderListState.value,
-                key = { it.creator_id ?: "" }
-            ) { Reminder ->
-                val dismissState = rememberDismissState(
-                    confirmStateChange = {
-                        if (it == DismissValue.DismissedToStart ||
-                            it == DismissValue.DismissedToEnd
-                        ) {
-                            reminderViewModel.deleteReminder(Reminder)
-
-                            return@rememberDismissState true
-                        }
-                        return@rememberDismissState false
-                    }
+        if (viewState.categories.isNotEmpty() && selectedCategory != null) {
+            Surface(modifier = Modifier.fillMaxSize()) {
+                HomeContent(
+                    selectedCategory = selectedCategory,
+                    categories = viewState.categories,
+                    onCategorySelected = viewModel::onCategorySelected,
+                    navController = navController
                 )
             }
-            item(key = "add_button") {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                )
-                {
-                    Button(modifier = Modifier
-                        .align(Alignment.Center),
-                        onClick = {
-                            reminderViewModel.resetSelectedReminder()
-                            onClickAddNote
-                        }) {
-                        Text(text = stringResource(id = R.string.add_note))
+        }
+    }
 
-                    }
+
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    @Composable
+    fun HomeContent(
+        selectedCategory: Category,
+        categories: List<Category>,
+        onCategorySelected: (Category) -> Unit,
+        navController: NavController,
+    ) {
+        Scaffold(
+            modifier = Modifier.padding(bottom = 24.dp),
+            floatingActionButton = {
+                val context = LocalContext.current
+                FloatingActionButton(
+                    onClick = {context.startActivity(Intent(context,MainActivity4::class.java))},
+                    contentColor = Color.Blue,
+                    modifier = Modifier.padding(all = 20.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                }
+            }
+        ) {
+            Column(
+                modifier = Modifier
+                    .systemBarsPadding()
+                    .fillMaxWidth()
+            ) {
+                val appBarColor = MaterialTheme.colors.secondary.copy(red = 0.99f)
+
+                HomeAppBar(
+                    backgroundColor = appBarColor,
+                )
+
+                CategoryTabs(
+                    categories = categories,
+                    selectedCategory = selectedCategory,
+                    onCategorySelected = onCategorySelected,
+                )
+
+            }
+        }
+    }
+
+    @Composable
+    private fun HomeAppBar(
+        backgroundColor: Color
+    ) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = "Home",
+                    color = Color.Black,
+                    modifier = Modifier
+                        .padding(start = 4.dp)
+                        .heightIn(max = 24.dp)
+                )
+            },
+            backgroundColor = backgroundColor,
+            actions = {
+                val context = LocalContext.current
+                IconButton( onClick = {
+                    context.startActivity(Intent(context,MainActivity::class.java))
+                } ) {
+                    Icon(imageVector = Icons.Filled.Lock, contentDescription = stringResource(R.string.lock))
+                }
+                IconButton( onClick = {
+                    context.startActivity(Intent(context,MainActivity2::class.java))
+                } ) {
+                    Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = stringResource(R.string.account))
+                }
+            }
+        )
+    }
+
+    @Composable
+    private fun CategoryTabs(
+        categories: List<Category>,
+        selectedCategory: Category,
+        onCategorySelected: (Category) -> Unit
+    ) {
+        val selectedIndex = categories.indexOfFirst { it == selectedCategory }
+        ScrollableTabRow(
+            selectedTabIndex = selectedIndex,
+            edgePadding = 24.dp,
+            indicator = emptyTabIndicator,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            categories.forEachIndexed { index, category ->
+                Tab(
+                    selected = index == selectedIndex,
+                    onClick = { onCategorySelected(category) }
+                ) {
+                    ChoiceChipContent(
+                        text = category.name,
+                        selected = index == selectedIndex,
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 16.dp)
+                    )
                 }
             }
         }
     }
-}
 
-@Preview
-@Composable
-fun PreviewHomeScreen() {
-    HomeScreen(
-        reminderViewModel = object : ReminderViewModelAbstract {
-            override val selectedState: State<reminder?>
-                get() = mutableStateOf(null)
-            override val reminderListFlow: Flow<List<reminder>>
-                get() = flowOf(
-                    listOf(
-                        reminder(Message = "Wakeup 1", location_x= "Wakeup", location_y= "Wakeup", reminder_time = "4:10", creation_time= "5", creator_id= 5, reminder_seen= "Wakeup"),
-                        reminder(Message = "Wakeup 2", location_x= "Wakeup", location_y= "Wakeup", reminder_time = "4:12", creation_time= "5", creator_id= 6, reminder_seen= "Wakeup"),
-                        reminder(Message = "Wakeup 3", location_x= "Wakeup", location_y= "Wakeup", reminder_time = "4:13", creation_time= "5", creator_id= 7, reminder_seen= "Wakeup")
+    @Composable
+    private fun ChoiceChipContent(
+        text: String,
+        selected: Boolean,
+        modifier: Modifier = Modifier
+    ) {
+        Surface(
+            color = when {
+                selected -> MaterialTheme.colors.secondary.copy(red = 0.99f)
+                else -> MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
+            },
+            contentColor = when {
+                selected -> Color.Black
+                else -> Color.Black
+            },
+            shape = MaterialTheme.shapes.small,
+            modifier = modifier
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.body2,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
+    }
 
-                    )
-                )
-
-            override fun addOrUpdateReminder(Reminder: reminder) {}
-            override fun deleteReminder(Reminder: reminder) {}
-            override fun selectReminder(Reminder: reminder) {}
-            override fun resetSelectedReminder() {}
-        },
-        onClickNote = {},
-        onClickAddNote = {},
-    )
-}
+    private val emptyTabIndicator: @Composable (List<TabPosition>) -> Unit = {}

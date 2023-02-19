@@ -6,14 +6,19 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
+
 import android.view.View
 import android.widget.*
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.MaterialTheme
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import com.example.mobile.ui.theme.MobileTheme
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
 import org.w3c.dom.Text
+import androidx.compose.material.Surface
 
 
 private val editor: SharedPreferences.Editor? = null
@@ -64,18 +69,29 @@ class MainActivity : AppCompatActivity() {
                 editor.putInt("id", 1)
                 editor.apply()
                 Toast.makeText(applicationContext,"Email & Password saved, Welcome "+ user1.text.toString().trim(),Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, MainActivity3::class.java)
-                startActivity(intent)
-                finish()
+                setContent {
+                    MobileTheme {
+                        // A surface container using the 'background' color from the theme
+                        Surface(color = MaterialTheme.colors.background) {
+                            MobileComputingApp()
+                        }
+                    }
+                }
+
             }
             val passw2: String? = sharedPreferences.getString("password", "a")
             val usern2: String? = sharedPreferences.getString("username", "a")
             val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
             if (passw2 == pass2.text.toString() && usern2 == user2.text.toString()){
                 Toast.makeText(applicationContext,"Welcome "+usern2,Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, MainActivity3::class.java)
-                startActivity(intent)
-                finish()
+                setContent {
+                    MobileTheme {
+                        // A surface container using the 'background' color from the theme
+                        Surface(color = MaterialTheme.colors.background) {
+                            MobileComputingApp()
+                        }
+                    }
+                }
             }else if(usern != ""&&(passw2 != pass1.text.toString() || usern2 != user1.text.toString())){
                 Toast.makeText(applicationContext,"Incorrect email or password",Toast.LENGTH_SHORT).show()
             }

@@ -55,7 +55,7 @@ fun CustomItemPreview() {
             location_x= "Wakeup",
             location_y= "Wakeup",
             reminder_time = "4:10",
-            creation_time= "5",
+            creation_time= 5,
             creator_id= 5,
             reminder_seen= "Wakeup"
         )
