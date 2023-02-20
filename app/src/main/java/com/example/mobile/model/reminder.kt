@@ -9,17 +9,19 @@ indices = [
 Index("creator_id")
 ],
 foreignKeys = [
-    ForeignKey(entity = Category::class,
+    ForeignKey(
+    entity = Category::class,
     parentColumns = ["id"],
     childColumns = ["creator_id"],
     onUpdate = ForeignKey.CASCADE,
-    onDelete = ForeignKey.CASCADE)
+    onDelete = ForeignKey.CASCADE
+    )
 
 
 ])
 data class reminder (
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val creation_time: Long = 0,
-    @ColumnInfo(name = "creator_id") val creator_id: Int,
+    @ColumnInfo(name = "creator_id") val creator_id: Long,
     @ColumnInfo(name = "message") val Message: String,
     @ColumnInfo(name = "location-x") val location_x: String,
     @ColumnInfo(name = "location-y") val location_y: String,

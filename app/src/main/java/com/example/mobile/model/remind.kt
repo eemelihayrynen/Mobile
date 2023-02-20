@@ -30,10 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mobile.MobileComputingApp
 import kotlinx.coroutines.launch
 
 @Composable
-fun Payment(
+fun Remind(
     onBackPress: () -> Unit,
     viewModel: RemindViewModel = viewModel() // uus viewmodel
 ) {
@@ -58,7 +59,7 @@ fun Payment(
                         contentDescription = null
                     )
                 }
-                Text(text = "Payment")
+                Text(text = "Reminder")
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,7 +69,7 @@ fun Payment(
                 OutlinedTextField(
                     value = title.value,
                     onValueChange = { title.value = it },
-                    label = { Text(text = "Payment title")},
+                    label = { Text(text = "Reminder name")},
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -80,7 +81,7 @@ fun Payment(
                 OutlinedTextField(
                     value = amount.value,
                     onValueChange = { amount.value = it },
-                    label = { Text(text = "Amount")},
+                    label = { Text(text = "time")},
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number
@@ -95,10 +96,17 @@ fun Payment(
                         coroutineScope.launch {
                             viewModel.saveRemind( // uus viewmodel
                                 reminder(
-                                    3,3,"ass","ass","ass","ass","ass"
+                                    creation_time = 0,
+                                    creator_id = getCategoryId(viewState.categories,category.value),
+                                    Message = title.value,
+                                    location_x = "location x",
+                                    location_y = "location y",
+                                    reminder_time = amount.value,
+                                    reminder_seen = "reminder seen"
                                 )
                             )
                         }
+                        onBackPress()
                         onBackPress()
                     },
                     modifier = Modifier

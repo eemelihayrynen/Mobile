@@ -6,16 +6,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.mobile.model.Remind
-import com.example.mobile.model.reminder
-
 
 @Composable
-fun MobileComputingApp(
+fun MobileComputingApp2(
     AppState: appstate = rememberMobileComputingAppState()
 ) {
     NavHost(
         navController = AppState.navController,
-        startDestination = "home"
+        startDestination = "Addition"
     ) {
         composable(route = "login") {
             val context = LocalContext.current

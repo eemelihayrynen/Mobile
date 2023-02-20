@@ -32,8 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
     @Composable
     fun Home(
-        viewModel: ReminderViewModel = viewModel(),
-        navController: NavController
+        viewModel: ReminderViewModel = viewModel()
     ) {
         val viewState by viewModel.state.collectAsState()
 
@@ -44,8 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
                 HomeContent(
                     selectedCategory = selectedCategory,
                     categories = viewState.categories,
-                    onCategorySelected = viewModel::onCategorySelected,
-                    navController = navController
+                    onCategorySelected = viewModel::onCategorySelected
                 )
             }
         }
@@ -58,7 +56,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
         selectedCategory: Category,
         categories: List<Category>,
         onCategorySelected: (Category) -> Unit,
-        navController: NavController,
     ) {
         Scaffold(
             modifier = Modifier.padding(bottom = 24.dp),
@@ -92,6 +89,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
                     categories = categories,
                     selectedCategory = selectedCategory,
                     onCategorySelected = onCategorySelected,
+                )
+
+                CategoryReminder(
+                    modifier = Modifier.fillMaxSize(),
+                    categoryId = selectedCategory.id
                 )
 
             }

@@ -9,7 +9,7 @@ class ReminderToCategory {
     @Embedded
     lateinit var Reminder: reminder
 
-    @Relation(parentColumn = "creator-id", entityColumn = "id")
+    @Relation(parentColumn = "creator_id", entityColumn = "id")
     lateinit var _categories: List<Category>
 
     @get:Ignore
