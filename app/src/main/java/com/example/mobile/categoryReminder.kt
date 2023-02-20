@@ -1,11 +1,9 @@
 package com.example.mobile
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.navigation.compose.composable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
@@ -16,9 +14,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.res.stringResource
@@ -28,13 +29,17 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mobile.model.Category
+import com.example.mobile.model.RemindViewModel
 import com.example.mobile.model.ReminderToCategory
 import com.example.mobile.model.reminder
 import com.example.mobile.model.room.viewModelProviderFactoryOf
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonDisposableHandle.parent
+import kotlinx.coroutines.coroutineScope
 import java.text.SimpleDateFormat
 import java.util.*
-
+import kotlinx.coroutines.launch
+import androidx.compose.ui.platform.LocalContext
 @Composable
 fun CategoryReminder(
     categoryId: Long,
@@ -78,7 +83,9 @@ private fun PaymentListItem(
     category: Category,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: RemindViewModel = viewModel()
 ) {
+    val coroutineScope = rememberCoroutineScope()
     ConstraintLayout(modifier = modifier.clickable { onClick() }) {
         val (divider, paymentTitle, paymentCategory, icon, date) = createRefs()
         Divider(
@@ -91,14 +98,14 @@ private fun PaymentListItem(
 
         // title
         Text(
-            text = Reminder.Message,
+            text = Reminder.reminder_time,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.constrainAs(paymentTitle) {
                 linkTo(
                     start = parent.start,
                     end = icon.start,
-                    startMargin = 24.dp,
+                    startMargin = 50.dp,
                     endMargin = 16.dp,
                     bias = 0f // float this towards the start. this was is the fix we needed
                 )
@@ -106,17 +113,16 @@ private fun PaymentListItem(
                 width = Dimension.preferredWrapContent
             }
         )
-
         // category
         Text(
-            text = category.name,
+            text = Reminder.Message,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle2,
             modifier = Modifier.constrainAs(paymentCategory) {
                 linkTo(
                     start = parent.start,
                     end = icon.start,
-                    startMargin = 24.dp,
+                    startMargin = 50.dp,
                     endMargin = 8.dp,
                     bias = 0f // float this towards the start. this was is the fix we needed
                 )
@@ -126,36 +132,20 @@ private fun PaymentListItem(
             }
         )
 
-        // date
-        Text(
-            text = Reminder.reminder_time,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.caption,
-            modifier = Modifier.constrainAs(date) {
-                linkTo(
-                    start = paymentCategory.end,
-                    end = icon.start,
-                    startMargin = 8.dp,
-                    endMargin = 16.dp,
-                    bias = 0f // float this towards the start. this was is the fix we needed
-                )
-                centerVerticallyTo(paymentCategory)
-                top.linkTo(paymentTitle.bottom, 6.dp)
-                bottom.linkTo(parent.bottom, 10.dp)
-            }
-        )
-
         // icon
         IconButton(
-            onClick = {},
+            onClick = {
+              coroutineScope.launch {
+                  viewModel.deleteRemind(Reminder)
+              }
+            },
             modifier = Modifier
                 .size(50.dp)
                 .padding(6.dp)
                 .constrainAs(icon) {
                     top.linkTo(parent.top, 10.dp)
                     bottom.linkTo(parent.bottom, 10.dp)
-                    end.linkTo(parent.end)
+                    end.linkTo(parent.end, 20.dp)
                 }
         ) {
             Icon(
@@ -163,6 +153,26 @@ private fun PaymentListItem(
                 contentDescription = "check"
             )
         }
+        val context = LocalContext.current
+        IconButton(
+
+            onClick = {coroutineScope.launch {
+                viewModel.deleteRemind(Reminder)}
+                context.startActivity(Intent(context,MainActivity4::class.java))
+            },
+            modifier = Modifier
+                .size(50.dp)
+                .padding(0.dp)
+
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Edit,
+                contentDescription = "edit"
+            )
+        }
+
+
+
     }
 }
 

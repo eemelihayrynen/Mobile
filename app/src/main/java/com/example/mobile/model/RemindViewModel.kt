@@ -24,6 +24,10 @@ class RemindViewModel (
         return remindRepository.addReminder(Reminder)
     }
 
+    suspend fun deleteRemind(reminder: reminder): Int {
+        return remindRepository.deleteReminder(reminder)
+    }
+
     init {
         viewModelScope.launch {
             reminderRepository.categories().collect{ categories ->

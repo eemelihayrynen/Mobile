@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mobile.MobileComputingApp
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @Composable
 fun Remind(
@@ -73,10 +74,6 @@ fun Remind(
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                CategoryListDropdown(
-                    viewState = viewState,
-                    category = category
-                )
                 Spacer(modifier = Modifier.height(10.dp))
                 OutlinedTextField(
                     value = amount.value,
@@ -97,7 +94,7 @@ fun Remind(
                             viewModel.saveRemind( // uus viewmodel
                                 reminder(
                                     creation_time = 0,
-                                    creator_id = getCategoryId(viewState.categories,category.value),
+                                    creator_id = getCategoryId(viewState.categories,"Reminders"),
                                     Message = title.value,
                                     location_x = "location x",
                                     location_y = "location y",
@@ -113,7 +110,7 @@ fun Remind(
                         .fillMaxWidth()
                         .size(55.dp)
                 ) {
-                    Text("Save payment")
+                    Text("Save reminder")
                 }
             }
         }
