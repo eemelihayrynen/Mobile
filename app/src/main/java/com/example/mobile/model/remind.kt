@@ -1,5 +1,6 @@
 package com.example.mobile.model
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,12 +28,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.mobile.MobileComputingApp
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.mobile.NotificationRequestWorker
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
+
 
 @Composable
 fun Remind(
@@ -44,7 +51,7 @@ fun Remind(
     val title = rememberSaveable { mutableStateOf("") }
     val category = rememberSaveable { mutableStateOf("") }
     val amount = rememberSaveable { mutableStateOf("") }
-
+    val context = LocalContext.current
     Surface {
         Column(
             modifier = Modifier
@@ -90,6 +97,19 @@ fun Remind(
                 Button(
                     enabled = true,
                     onClick = {
+
+                        val minutes = minutes(amount.value)
+                        Log.d("minutes: ", minutes.toString())
+                        val hours = hours(amount.value)
+                        Log.d("hours: ", hours.toString())
+                        val seconds = 2
+                        Log.d("sekunnit: ", seconds.toString())
+                        val workerRequest = OneTimeWorkRequestBuilder<NotificationRequestWorker>()
+                            .setInitialDelay(seconds.toLong(), TimeUnit.SECONDS)
+                            .build()
+                        // Enqueue the above workrequest object to the WorkManager
+                        WorkManager.getInstance(context).enqueue(workerRequest)
+
                         coroutineScope.launch {
                             viewModel.saveRemind( // uus viewmodel
                                 reminder(
@@ -116,11 +136,42 @@ fun Remind(
         }
     }
 }
+fun minutes(minat:String):Long {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    val currentTime = LocalDateTime.now().format(formatter)
+    val split = currentTime.split(":")
+    val minutesNow = split[split.size-2]+""+split[split.size-1]
+    val splitted = minat.split(".")
+    val minutes = splitted[splitted.size-2]+""+splitted[splitted.size-1]
+    if (minutes.toLong()<minutesNow.toLong()){
+        return 1
+    }
+    if (minutes.toLong()>minutesNow.toLong()){
+        return 1
+    }
+    return 0
+}
+fun hours(tunnit: String):Long  {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    val currentTime = LocalDateTime.now().format(formatter)
+    val split = currentTime.split(":").toString()
+    val hoursNow = split[1] + "" + split[2]
+    val splitted = tunnit.split(".").toString()
+    val hours = splitted[5] + "" + splitted[6]
+    Log.wtf("hours: ", hours)
+    Log.wtf("hoursNow: ", hoursNow)
+    if (hours.toLong() < hoursNow.toLong()) {
+        return 0
 
+    }
+    if (hours.toLong() > hoursNow.toLong()) {
+        return 0
+    }
+    return 0
+}
 private fun getCategoryId(categories: List<Category>, categoryName: String): Long {
     return categories.first { category -> category.name == categoryName }.id
 }
-
 @Composable
 private fun CategoryListDropdown(
     viewState: RemindViewState,
