@@ -63,7 +63,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
                 val context = LocalContext.current
                 FloatingActionButton(
                     onClick = {context.startActivity(Intent(context,MainActivity4::class.java))},
-                    contentColor = Color.Blue,
+                    contentColor = Color.Black,
                     modifier = Modifier.padding(all = 20.dp)
                 ) {
                     Icon(
