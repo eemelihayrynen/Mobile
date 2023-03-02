@@ -35,9 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
         viewModel: ReminderViewModel = viewModel()
     ) {
         val viewState by viewModel.state.collectAsState()
-
         val selectedCategory = viewState.selectedCategory
-
         if (viewState.categories.isNotEmpty() && selectedCategory != null) {
             Surface(modifier = Modifier.fillMaxSize()) {
                 HomeContent(
@@ -48,8 +46,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
             }
         }
     }
-
-
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     fun HomeContent(
@@ -130,7 +126,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
             }
         )
     }
-
     @Composable
     private fun CategoryTabs(
         categories: List<Category>,

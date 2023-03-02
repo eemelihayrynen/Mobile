@@ -1,6 +1,10 @@
 package com.example.mobile
 
 import android.content.Intent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost

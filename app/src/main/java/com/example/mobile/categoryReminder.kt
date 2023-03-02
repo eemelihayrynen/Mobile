@@ -98,7 +98,7 @@ private fun PaymentListItem(
 
         // title
         Text(
-            text = Reminder.reminder_time,
+            text = Reminder.Message,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.constrainAs(paymentTitle) {
@@ -115,7 +115,7 @@ private fun PaymentListItem(
         )
         // category
         Text(
-            text = Reminder.Message,
+            text = Reminder.reminder_time,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle2,
             modifier = Modifier.constrainAs(paymentCategory) {
