@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -77,15 +78,23 @@ fun Remind(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Spacer(modifier = Modifier.height(10.dp))
-                OutlinedTextField(
-                    value = amount.value,
-                    onValueChange = { amount.value = it },
-                    label = { Text(text = "time")},
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
+                Row(modifier = Modifier.fillMaxWidth()){
+                    OutlinedTextField(
+                        value = amount.value,
+                        onValueChange = { amount.value = it },
+                        label = { Text(text = "time")},
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        modifier = Modifier.fillMaxWidth(fraction = 0.5f)
                     )
-                )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    OutlinedButton(
+                        onClick = { context.startActivity(Intent(context, MainActivity7::class.java))},
+                        modifier = Modifier.height(55.dp)) {
+                        Text(text = "Reminder location")
+                    }
+                }
                 Spacer(modifier = Modifier.height(10.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,

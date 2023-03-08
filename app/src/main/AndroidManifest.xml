@@ -15,6 +15,14 @@
         android:theme="@style/Theme.Mobile"
         tools:targetApi="31">
         <activity
+            android:name=".MainActivity7"
+            android:exported="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCxs8_lvfaqD3z_SIA_E85ouPoRxxoCF-E" />
+
+        <activity
             android:name=".MainActivity6"
             android:exported="false" />
         <activity
