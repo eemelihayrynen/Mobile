@@ -24,7 +24,6 @@ import java.util.*
 fun ReminderLocationMap(){
     val mapView = rememberMapViewWithLifecycle()
     val courutineScope = rememberCoroutineScope()
-
     Column(modifier = Modifier
         .fillMaxSize()
         .background(Color.Black)
@@ -65,9 +64,6 @@ private fun setMapLongClick(
         map.addMarker(
             MarkerOptions().position(latlng).title("Payment location").snippet(snippet)
         ).apply {
-            navController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.set("location_data", latlng)
         }
     }
 }
