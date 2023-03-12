@@ -18,10 +18,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ktx.awaitMap
 import kotlinx.coroutines.launch
+import java.lang.reflect.Array.set
 import java.util.*
 
 @Composable
-fun ReminderLocationMap(){
+fun ReminderLocationMap(    navController: NavController){
     val mapView = rememberMapViewWithLifecycle()
     val courutineScope = rememberCoroutineScope()
     Column(modifier = Modifier
@@ -44,15 +45,32 @@ fun ReminderLocationMap(){
                     .position(location)
                 map.addMarker(markerOptions)
 
-                setMapLongClick(map = map)
+                setMapLongClick(map = map,navController)
             }
         }
     }
 }
 
 private fun setMapLongClick(
-    map: GoogleMap
+    map: GoogleMap,
+    navController: NavController
 ) {
+    map.setOnMapClickListener { latlng ->
+        val snippet = String.format(
+            Locale.getDefault(),
+            "Lat: %1$.2f, Lng: %2$.2f",
+            latlng.latitude,
+            latlng.longitude
+        )
+
+        /* TODO: show nearby reminders on the map when clicked
+
+        map.addMarker(
+            MarkerOptions().position(latlng).title("Reminder location").snippet(snippet)
+        )
+
+        */
+    }
     map.setOnMapLongClickListener { latlng ->
         val snippet = String.format(
             Locale.getDefault(),
@@ -62,8 +80,12 @@ private fun setMapLongClick(
         )
 
         map.addMarker(
-            MarkerOptions().position(latlng).title("Payment location").snippet(snippet)
+            MarkerOptions().position(latlng).title("Reminder location").snippet(snippet)
         ).apply {
+            navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.set("location_data", latlng)
         }
     }
 }
+

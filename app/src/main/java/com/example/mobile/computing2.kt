@@ -27,7 +27,10 @@ fun MobileComputingApp2(
             Home()
         }
         composable(route = "Addition") {
-            Remind(onBackPress = AppState::navigateBack)
+            Remind(onBackPress = AppState::navigateBack,navController = AppState.navController)
+        }
+        composable(route = "map") {
+            ReminderLocationMap(navController = AppState.navController)
         }
     }
 }
