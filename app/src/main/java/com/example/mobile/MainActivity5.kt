@@ -13,24 +13,35 @@ import java.util.*
 class MainActivity5 : AppCompatActivity() {
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
-
+    Log.d("moi: ", "moi2")
     val extras = intent.extras
     val newstring = extras?.getString("message")
     val hours = extras?.getString("hour").toString()
     val min = extras?.getString("min").toString()
-    Log.d("message: ", newstring.toString())
-    Log.d("mins: ", min)
-    Log.d("hours: ", hours)
-        super.onCreate(savedInstanceState)
+    super.onCreate(savedInstanceState)
+    try{
+        val locationy = extras?.getString("locationy").toString()
+        val locationx = extras?.getString("locationx").toString()
+        Log.d("moi: ", "moi3")
+        setContent {
+            MobileTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(color = MaterialTheme.colors.background) {
+                    Remind3(hour=hours.toInt(), min =min.toInt() , message = newstring.toString(),locationy = locationy,locationx=locationx)
+                }
+            }
+        }
+    } catch (e: Exception) {
+        setContent {
+            MobileTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(color = MaterialTheme.colors.background) {
+                    Remind2(hour=hours.toInt(), min =min.toInt() , message = newstring.toString())
+                }}}}
 
         setContent {
             MobileTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     Remind2(hour=hours.toInt(), min =min.toInt() , message = newstring.toString())
-                }
-            }
-        }
-    }
-
-}
+                }}}}}

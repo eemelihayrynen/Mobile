@@ -30,6 +30,8 @@ class NotificationRequestWorker(val context: Context, workerParameters: WorkerPa
         val hour = Calendar.getInstance().get(Calendar.HOUR).toString()
         val min = Calendar.getInstance().get(Calendar.MINUTE).toString()
         val texters = inputData.getString("message")
+        val locationx = inputData.getString("locationx")
+        val locationy = inputData.getString("locationy")
         notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         var intent = Intent(context, MainActivity6::class.java)
@@ -66,7 +68,7 @@ class NotificationRequestWorker(val context: Context, workerParameters: WorkerPa
             return hour
         }
         pm(hour)
-        context.startActivity(Intent(context, MainActivity5::class.java).putExtra("hour",hour).putExtra("message",texters.toString()).putExtra("min",min).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        context.startActivity(Intent(context, MainActivity5::class.java).putExtra("hour",hour).putExtra("message",texters.toString()).putExtra("min",min).putExtra("locationx", locationx).putExtra("locationy",locationy).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 
     return Result.success()
 }

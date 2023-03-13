@@ -28,7 +28,8 @@ import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
-
+val lista = mutableListOf("")
+val nimi = mutableListOf("")
 @Composable
 fun Remind(
     onBackPress: () -> Unit,
@@ -92,7 +93,9 @@ fun Remind(
                     Spacer(modifier = Modifier.width(10.dp))
                     if (latlng == null) {
                         OutlinedButton(
-                            onClick = { navController.navigate("map") },
+                            onClick = {
+                                navController.navigate("map")
+                                      },
                             modifier = Modifier.height(55.dp)
                         ) {
                             Text(text = "Reminder location")
@@ -133,6 +136,7 @@ fun Remind(
                         if (latlng == null) {
                             if (amount.value != "" && isChecked.value) {
                                 data.putString("message", title.value)
+
                                 val split = amount.value.split(".")
                                 val hour = split[0]
                                 val min = split[1]
@@ -190,7 +194,6 @@ fun Remind(
                                             .putExtra("min", min)
                                     )
                                 }
-
                                 context.startActivity(
                                     Intent(
                                         context,
@@ -226,6 +229,9 @@ fun Remind(
                         }else{
                             if (amount.value != "" && isChecked.value) {
                                 data.putString("message", title.value)
+                                data.putString("locationy",latlng.longitude.toString())
+                                data.putString("locationx",latlng.latitude.toString())
+                                Log.d("moi: ", "moi")
                                 val split = amount.value.split(".")
                                 val hour = split[0]
                                 val min = split[1]
@@ -242,6 +248,8 @@ fun Remind(
                                 val milseconds = goalTime - nowTime
                                 val seconds = milseconds / 1000
                                 Log.d("seconds: ", seconds.toString())
+                                list(latlng,title.value)
+
                                 val workerRequest =
                                     OneTimeWorkRequestBuilder<NotificationRequestWorker>()
                                         .setInitialDelay(seconds, TimeUnit.SECONDS)
@@ -274,12 +282,13 @@ fun Remind(
                                 val milseconds = goalTime - nowTime
                                 val seconds = milseconds / 1000
                                 Log.d("seconds: ", seconds.toString())
+                                list(latlng,title.value)
                                 Timer().schedule(milseconds) {
                                     context.startActivity(
                                         Intent(
                                             context,
                                             MainActivity5::class.java
-                                        ).putExtra("hour", hour).putExtra("message", title.value)
+                                        ).putExtra("hour", hour).putExtra("message", title.value).putExtra("locationx", latlng.latitude.toString()).putExtra("locationy",latlng.longitude.toString())
                                             .putExtra("min", min)
                                     )
                                 }
@@ -291,7 +300,11 @@ fun Remind(
                                     ).putExtra("Message", title.value)
                                 )
                             }
-                            if (amount.value == "") {
+                            if (amount.value == "" && !isChecked.value) {
+                                /*TODO: if the user is close enough to the alarm it gets added*/
+                                context.startActivity(Intent(context, MainActivity9::class.java))
+                                Log.d("moro: ", "mororororo")
+                                list(latlng,title.value)
                                 coroutineScope.launch {
                                     viewModel.saveRemind( // uus viewmodel
                                         reminder(
@@ -313,7 +326,30 @@ fun Remind(
                                             MainActivity6::class.java
                                         ).putExtra("Message", title.value)
                                     )
-                                }}}},
+                                }}
+                            if (amount.value == "" && isChecked.value) {
+                                    list(latlng,title.value)
+                                    data.putString("message", title.value)
+                                    data.putString("locationy",latlng.longitude.toString())
+                                    data.putString("locationx",latlng.latitude.toString())
+                                    Log.d("moi: ", "moi")
+                                    /* TODO: nykynen sijainti vs latlng*/
+                                    val workerRequest =
+                                        OneTimeWorkRequestBuilder<NotificationRequestWorker>()
+                                            .setInitialDelay(0, TimeUnit.SECONDS)
+                                            .setInputData(data.build())
+                                            .build()
+                                     // Enqueue the above workrequest object to the WorkManager
+                                    WorkManager.getInstance(context).enqueue(workerRequest)
+                                    context.startActivity(
+                                        Intent(
+                                            context,
+                                            MainActivity6::class.java
+                                        ).putExtra("Message", title.value)
+                                    )
+                                }
+
+                        }},
                     modifier = Modifier
                         .fillMaxWidth()
                         .size(55.dp)
@@ -345,6 +381,14 @@ fun ampm(): Long{
     }
     return 0
 }
+fun list(latLng: LatLng,string: String){
+    val paikkay = latLng.longitude.toString()
+    val paikkax = latLng.latitude.toString()
+    val paikka = paikkax +" "+ paikkay
+    lista.add(paikka)
+    nimi.add(string)
+}
+
 
 private fun getCategoryId(categories: List<Category>, categoryName: String): Long {
     return categories.first { category -> category.name == categoryName }.id
