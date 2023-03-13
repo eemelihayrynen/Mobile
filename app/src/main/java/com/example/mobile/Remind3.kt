@@ -52,11 +52,11 @@ fun Remind3(
     val time = "$hour.$min"
     Log.d("time: ", time)
     coroutineScope.launch {
-        Log.d("moro: ", "moro")
+        Log.d("mozo: ", "mozo")
 
         viewModel.saveRemind( // uus viewmodel
             reminder(
-                creation_time = 1,
+                creation_time = 3,
                 creator_id = 2,
                 Message = message,
                 location_x = locationx,

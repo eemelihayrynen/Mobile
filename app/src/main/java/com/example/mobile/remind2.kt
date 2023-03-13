@@ -54,8 +54,8 @@ fun Remind2(
 
         viewModel.saveRemind( // uus viewmodel
             reminder(
-                creation_time = 0,
-                creator_id = 1,
+                creation_time = 2,
+                creator_id = 2,
                 Message = message,
                 location_x = "location x",
                 location_y = "location y",

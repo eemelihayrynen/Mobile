@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.*
@@ -16,6 +17,7 @@ class MainActivity9 : AppCompatActivity() {
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("moro: ", "moro")
         super.onCreate(savedInstanceState)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -23,6 +25,7 @@ class MainActivity9 : AppCompatActivity() {
     }
 
     private fun fetchLocation() {
+        Log.d("moro: ", "moro")
         val task = fusedLocationProviderClient.lastLocation
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
@@ -33,7 +36,8 @@ class MainActivity9 : AppCompatActivity() {
             return}
         task.addOnSuccessListener {
             if(it != null){
-
+                Log.d("long: ", it.longitude.toString())
+                Log.d("lat: ", it.latitude.toString())
                 val a = it.longitude.toString()
                 val b = it.latitude.toString()
                 editor.putString("latitude", b)

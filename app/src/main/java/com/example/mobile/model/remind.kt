@@ -208,7 +208,7 @@ fun Remind(
                                 coroutineScope.launch {
                                     viewModel.saveRemind( // uus viewmodel
                                         reminder(
-                                            creation_time = 0,
+                                            creation_time = 1,
                                             creator_id = getCategoryId(
                                                 viewState.categories,
                                                 "Reminders"
@@ -250,7 +250,7 @@ fun Remind(
                                 val nowTime = ampm()
                                 val milseconds = goalTime - nowTime
                                 val seconds = milseconds / 1000
-                                Log.d("seconds: ", seconds.toString())
+
                                 lista(latlng,title.value)
 
                                 val workerRequest =
@@ -304,6 +304,9 @@ fun Remind(
                                 )
                             }
                             if (amount.value == "" && !isChecked.value) {
+                                Log.d("log id: ",getCategoryId(
+                                    viewState.categories,
+                                    "Reminders").toString())
 
                                 context.startActivity(Intent(context, MainActivity9::class.java))
                                 val sharedPreferences =
@@ -350,13 +353,15 @@ fun Remind(
                                 data.putString("locationy", latlng.longitude.toString())
                                 data.putString("locationx", latlng.latitude.toString())
                                 Log.d("moi: ", "moi")
-                                /* TODO: nykynen sijainti vs latlng*/
                                 context.startActivity(Intent(context, MainActivity9::class.java))
+
                                 val sharedPreferences =
                                     PreferenceManager.getDefaultSharedPreferences(context)
                                 val latitude: String? = sharedPreferences.getString("latitude", "0")
                                 val longitude: String? =
                                     sharedPreferences.getString("longitude", "0")
+                                Log.d("latitude: ", latitude.toString())
+                                Log.d("longitude: ", longitude.toString())
                                 val a = latlng.latitude
                                 val b = latlng.longitude
                                 val e2 = latitude.toString()
