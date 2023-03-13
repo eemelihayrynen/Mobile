@@ -77,7 +77,6 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-
             }
             val passw2: String? = sharedPreferences.getString("password", "a")
             val usern2: String? = sharedPreferences.getString("username", "a")

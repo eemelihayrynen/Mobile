@@ -1,6 +1,8 @@
 package com.example.mobile.model
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
@@ -19,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.preference.PreferenceManager
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -248,7 +251,7 @@ fun Remind(
                                 val milseconds = goalTime - nowTime
                                 val seconds = milseconds / 1000
                                 Log.d("seconds: ", seconds.toString())
-                                list(latlng,title.value)
+                                lista(latlng,title.value)
 
                                 val workerRequest =
                                     OneTimeWorkRequestBuilder<NotificationRequestWorker>()
@@ -282,7 +285,7 @@ fun Remind(
                                 val milseconds = goalTime - nowTime
                                 val seconds = milseconds / 1000
                                 Log.d("seconds: ", seconds.toString())
-                                list(latlng,title.value)
+                                lista(latlng,title.value)
                                 Timer().schedule(milseconds) {
                                     context.startActivity(
                                         Intent(
@@ -301,10 +304,21 @@ fun Remind(
                                 )
                             }
                             if (amount.value == "" && !isChecked.value) {
-                                /*TODO: if the user is close enough to the alarm it gets added*/
+
                                 context.startActivity(Intent(context, MainActivity9::class.java))
-                                Log.d("moro: ", "mororororo")
-                                list(latlng,title.value)
+                                val sharedPreferences =
+                                    PreferenceManager.getDefaultSharedPreferences(context)
+                                val latitude: String? = sharedPreferences.getString("latitude", "0")
+                                val longitude: String? =
+                                    sharedPreferences.getString("longitude", "0")
+                                val a = latlng.latitude
+                                val b = latlng.longitude
+                                val e2 = latitude.toString()
+                                val e = e2.toDouble()
+                                val f2 = longitude.toString()
+                                val f = f2.toDouble()
+                                lista(latlng,title.value)
+                                if (a - e < 0.01 && a - e > 0.00 && b - f < 0.01 && b - f > 0.00 || a - e > -0.01 && a - e < 0.00 && b - f > -0.01 && b - f < 0.00 || a - e > -0.01 && a - e < 0.00 && b - f < 0.01 && b - f > 0.00 || b - f > -0.01 && b - f < 0.00 && a - e < 0.01 && a - e > 0.00) {
                                 coroutineScope.launch {
                                     viewModel.saveRemind( // uus viewmodel
                                         reminder(
@@ -320,35 +334,51 @@ fun Remind(
                                             reminder_seen = "reminder seen"
                                         )
                                     )
-                                    context.startActivity(
-                                        Intent(
-                                            context,
-                                            MainActivity6::class.java
-                                        ).putExtra("Message", title.value)
-                                    )
+
                                 }}
+                                context.startActivity(
+                                    Intent(
+                                        context,
+                                        MainActivity6::class.java
+                                    ).putExtra("Message", title.value)
+                                )
+
+                            }
                             if (amount.value == "" && isChecked.value) {
-                                    list(latlng,title.value)
-                                    data.putString("message", title.value)
-                                    data.putString("locationy",latlng.longitude.toString())
-                                    data.putString("locationx",latlng.latitude.toString())
-                                    Log.d("moi: ", "moi")
-                                    /* TODO: nykynen sijainti vs latlng*/
+                                lista(latlng, title.value)
+                                data.putString("message", title.value)
+                                data.putString("locationy", latlng.longitude.toString())
+                                data.putString("locationx", latlng.latitude.toString())
+                                Log.d("moi: ", "moi")
+                                /* TODO: nykynen sijainti vs latlng*/
+                                context.startActivity(Intent(context, MainActivity9::class.java))
+                                val sharedPreferences =
+                                    PreferenceManager.getDefaultSharedPreferences(context)
+                                val latitude: String? = sharedPreferences.getString("latitude", "0")
+                                val longitude: String? =
+                                    sharedPreferences.getString("longitude", "0")
+                                val a = latlng.latitude
+                                val b = latlng.longitude
+                                val e2 = latitude.toString()
+                                val e = e2.toDouble()
+                                val f2 = longitude.toString()
+                                val f = f2.toDouble()
+                                if (a - e < 0.01 && a - e > 0.00 && b - f < 0.01 && b - f > 0.00 || a - e > -0.01 && a - e < 0.00 && b - f > -0.01 && b - f < 0.00 || a - e > -0.01 && a - e < 0.00 && b - f < 0.01 && b - f > 0.00 || b - f > -0.01 && b - f < 0.00 && a - e < 0.01 && a - e > 0.00) {
                                     val workerRequest =
                                         OneTimeWorkRequestBuilder<NotificationRequestWorker>()
                                             .setInitialDelay(0, TimeUnit.SECONDS)
                                             .setInputData(data.build())
                                             .build()
-                                     // Enqueue the above workrequest object to the WorkManager
+                                    // Enqueue the above workrequest object to the WorkManager
                                     WorkManager.getInstance(context).enqueue(workerRequest)
-                                    context.startActivity(
-                                        Intent(
-                                            context,
-                                            MainActivity6::class.java
-                                        ).putExtra("Message", title.value)
-                                    )
                                 }
-
+                                context.startActivity(
+                                    Intent(
+                                        context,
+                                        MainActivity6::class.java
+                                    ).putExtra("Message", title.value)
+                                )
+                            }
                         }},
                     modifier = Modifier
                         .fillMaxWidth()
@@ -381,7 +411,7 @@ fun ampm(): Long{
     }
     return 0
 }
-fun list(latLng: LatLng,string: String){
+fun lista(latLng: LatLng,string: String){
     val paikkay = latLng.longitude.toString()
     val paikkax = latLng.latitude.toString()
     val paikka = paikkax +" "+ paikkay
